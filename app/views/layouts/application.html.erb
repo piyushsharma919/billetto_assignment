@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Billetto Assignment" %></title>
+    <title><%= content_for(:title) || "Billetto Events" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Billetto Assignment">
+    <meta name="application-name" content="Billetto Events">
     <meta name="mobile-web-app-capable" content="yes">
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -19,11 +20,31 @@
     <link rel="apple-touch-icon" href="/icon.png">
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <%= yield %>
+  <body class="min-h-screen bg-gray-50 text-gray-900 antialiased flex flex-col">
+    <header class="bg-white border-b border-gray-200">
+      <nav class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <%= link_to root_path, class: "text-2xl font-bold tracking-tight text-indigo-600" do %>
+          Billetto<span class="text-gray-900">.</span>
+        <% end %>
+
+        <div class="flex items-center gap-5 text-sm font-medium">
+          <%= link_to "Events", root_path, class: "text-gray-600 hover:text-indigo-600 transition" %>
+        </div>
+      </nav>
+    </header>
+
+    <main class="flex-1 w-full max-w-7xl mx-auto px-6 py-10">
+      <%= yield %>
+    </main>
+
+    <footer class="border-t border-gray-200 bg-white">
+      <div class="max-w-7xl mx-auto px-6 py-5 text-center text-sm text-gray-500">
+        © <%= Date.current.year %> Billetto Events. All rights reserved.
+      </div>
+    </footer>
   </body>
 </html>

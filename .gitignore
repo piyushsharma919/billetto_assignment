@@ -36,3 +36,6 @@
 # Ignore Environment variables file
 .env*
 !.env.example
+
+/app/assets/builds/*
+!/app/assets/builds/.keep
