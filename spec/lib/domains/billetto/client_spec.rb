@@ -30,7 +30,7 @@ RSpec.describe Domains::Billetto::Client do
     let(:response_body) do
       {
         "object" => "list",
-        "data" => [{ "id" => "123", "title" => "Test Event" }],
+        "data" => [ { "id" => "123", "title" => "Test Event" } ],
         "has_more" => false
       }
     end
@@ -120,7 +120,7 @@ RSpec.describe Domains::Billetto::Client do
     end
 
     context "when authentication fails" do
-      [401, 403].each do |status|
+      [ 401, 403 ].each do |status|
         it "raises AuthenticationError for HTTP #{status}" do
           allow(response).to receive(:success?).and_return(false)
           allow(response).to receive(:code).and_return(status)

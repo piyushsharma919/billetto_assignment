@@ -24,7 +24,7 @@ RSpec.describe Domains::Billetto::PublicEvents do
       before do
         allow(client).to receive(:get)
           .with("/public/events", params: { limit: 25 }, next_url: nil)
-          .and_return({ "data" => [api_event] })
+          .and_return({ "data" => [ api_event ] })
       end
 
       it "creates new events" do
@@ -58,7 +58,7 @@ RSpec.describe Domains::Billetto::PublicEvents do
         )
 
         allow(client).to receive(:get)
-          .and_return({ "data" => [api_event] })
+          .and_return({ "data" => [ api_event ] })
       end
 
       it "updates the existing event instead of creating a new one" do
@@ -91,7 +91,7 @@ RSpec.describe Domains::Billetto::PublicEvents do
       before do
         allow(client).to receive(:get)
           .and_return({
-            "data" => [invalid_event, api_event]
+            "data" => [ invalid_event, api_event ]
           })
       end
 
@@ -150,7 +150,7 @@ RSpec.describe Domains::Billetto::PublicEvents do
 
       let(:first_page) do
         {
-          "data" => [api_event],
+          "data" => [ api_event ],
           "has_more" => true,
           "next_url" => "https://billetto.dk/api/v3/public/events?limit=25&after=cursor-123"
         }
@@ -158,7 +158,7 @@ RSpec.describe Domains::Billetto::PublicEvents do
 
       let(:second_page) do
         {
-          "data" => [second_event],
+          "data" => [ second_event ],
           "has_more" => false,
           "next_url" => nil
         }
@@ -195,7 +195,7 @@ RSpec.describe Domains::Billetto::PublicEvents do
       before do
         allow(client).to receive(:get).and_return(
           {
-            "data" => [api_event],
+            "data" => [ api_event ],
             "has_more" => true,
             "next_url" => nil
           }

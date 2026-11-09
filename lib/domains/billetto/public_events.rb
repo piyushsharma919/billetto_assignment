@@ -43,7 +43,7 @@ module Domains::Billetto
 
     private
 
-    def process_event(raw_event, result: )
+    def process_event(raw_event, result:)
       sanitized_attributes = Domains::Billetto::Mappers::Event.call(
         raw_data: raw_event
       )
