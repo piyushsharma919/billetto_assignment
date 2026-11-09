@@ -8,6 +8,7 @@ A Ruby on Rails application to integrate the Billetto API to fetch, store and di
 - Ruby on Rails `8.1.4.1`
 - PostgreSQL `18`
 - RSpec
+- Tailwind CSS
 
 ## Setup
 
@@ -74,6 +75,22 @@ rails server
 ```
 
 Visit [http://localhost:3000](http://localhost:3000) to access the application.
+
+## Tailwind CSS
+
+The application uses Tailwind CSS for styling, integrated through `tailwindcss-rails`.
+
+Build the CSS:
+
+```bash
+bin/rails tailwindcss:build
+```
+
+Watch for stylesheet changes during development:
+
+```bash
+bin/rails tailwindcss:watch
+```
 
 ## Running Tests
 
