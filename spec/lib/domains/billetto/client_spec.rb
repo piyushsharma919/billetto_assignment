@@ -1,4 +1,3 @@
-
 require "rails_helper"
 
 RSpec.describe Domains::Billetto::Client do
@@ -48,23 +47,76 @@ RSpec.describe Domains::Billetto::Client do
       allow(HTTParty).to receive(:get).and_return(response)
     end
 
-    it "makes a GET request to the Billetto API" do
-      expect(HTTParty).to receive(:get).with(
-        "#{described_class::BASE_URL}#{endpoint}",
-        headers: {
-          "Api-Keypair" => api_keypair,
-          "Accept" => "application/json"
-        },
-        query: params
-      ).and_return(response)
+    context "when requesting the first page" do
+      it "makes a GET request to the Billetto API" do
+        expect(HTTParty).to receive(:get).with(
+          "#{described_class::BASE_URL}#{endpoint}",
+          headers: {
+            "Api-Keypair" => api_keypair,
+            "Accept" => "application/json"
+          },
+          query: params
+        ).and_return(response)
 
-      client.get(endpoint, params: params)
+        client.get(endpoint, params: params)
+      end
+
+      it "returns the parsed response" do
+        result = client.get(endpoint, params: params)
+
+        expect(result).to eq(response_body)
+      end
     end
 
-    it "returns the parsed response" do
-      result = client.get(endpoint, params: params)
+    context "when requesting a subsequent page" do
+      let(:next_url) do
+        "https://billetto.dk/api/v3/public/events?limit=25&after=cursor-123"
+      end
 
-      expect(result).to eq(response_body)
+      it "uses the pagination URL without query parameters" do
+        expect(HTTParty).to receive(:get).with(
+          next_url,
+          headers: {
+            "Api-Keypair" => api_keypair,
+            "Accept" => "application/json"
+          },
+          query: {}
+        ).and_return(response)
+
+        client.get(endpoint, params: params, next_url: next_url)
+      end
+
+      it "returns the parsed response" do
+        result = client.get(endpoint, next_url: next_url)
+
+        expect(result).to eq(response_body)
+      end
+    end
+
+    context "when the pagination URL is invalid" do
+      it "rejects URLs from unexpected hosts" do
+        expect {
+          client.get(
+            endpoint,
+            next_url: "https://example.com/api/v3/public/events?after=123"
+          )
+        }.to raise_error(
+          Domains::Billetto::ApiError,
+          "Invalid Billetto pagination URL"
+        )
+      end
+
+      it "rejects non-HTTPS URLs" do
+        expect {
+          client.get(
+            endpoint,
+            next_url: "http://billetto.dk/api/v3/public/events?after=123"
+          )
+        }.to raise_error(
+          Domains::Billetto::ApiError,
+          "Invalid Billetto pagination URL"
+        )
+      end
     end
 
     context "when authentication fails" do

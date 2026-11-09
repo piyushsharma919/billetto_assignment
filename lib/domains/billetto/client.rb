@@ -11,11 +11,13 @@ module Domains::Billetto
       }
     end
 
-    def get(endpoint, params: {})
+    def get(endpoint, params: {}, next_url: nil)
+      url =  validated_next_url(next_url) || "#{BASE_URL}#{endpoint}"
+
       response = HTTParty.get(
-        "#{BASE_URL}#{endpoint}",
+        url,
         headers: @headers,
-        query: params
+        query: next_url.present? ? {} : params
       )
 
       handle_response(response)
@@ -36,6 +38,21 @@ module Domains::Billetto
       else
         raise ApiError, "Billetto API request failed with HTTP #{response.code} body #{response.body}"
       end
+    end
+
+    def validated_next_url(url)
+      return unless url.present?
+
+      uri = URI.parse(url)
+      base_uri = URI.parse(BASE_URL)
+
+      unless uri.scheme == "https" && uri.host == base_uri.host
+        raise ApiError, "Invalid Billetto pagination URL"
+      end
+
+      url
+    rescue URI::InvalidURIError
+      raise ApiError, "Invalid Billetto pagination URL"
     end
   end
 end

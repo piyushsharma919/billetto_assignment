@@ -23,7 +23,7 @@ RSpec.describe Domains::Billetto::PublicEvents do
     context "when events are successfully fetched" do
       before do
         allow(client).to receive(:get)
-          .with("/public/events", params: { limit: 25 })
+          .with("/public/events", params: { limit: 25 }, next_url: nil)
           .and_return({ "data" => [api_event] })
       end
 
@@ -136,6 +136,78 @@ RSpec.describe Domains::Billetto::PublicEvents do
           errors: 0,
           created: 0,
           updated: 0
+        )
+      end
+    end
+
+    context "when multiple pages are available" do
+      let(:second_event) do
+        api_event.merge(
+          "id" => "event-2",
+          "title" => "Rock Concert"
+        )
+      end
+
+      let(:first_page) do
+        {
+          "data" => [api_event],
+          "has_more" => true,
+          "next_url" => "https://billetto.dk/api/v3/public/events?limit=25&after=cursor-123"
+        }
+      end
+
+      let(:second_page) do
+        {
+          "data" => [second_event],
+          "has_more" => false,
+          "next_url" => nil
+        }
+      end
+
+      before do
+        allow(client).to receive(:get)
+          .with("/public/events", params: { limit: 25 }, next_url: nil)
+          .and_return(first_page)
+
+        allow(client).to receive(:get)
+          .with("/public/events", params: { limit: 25 }, next_url: first_page["next_url"])
+          .and_return(second_page)
+      end
+
+      it "fetches and processes all available pages" do
+        expect {
+          service.all_event
+        }.to change(Event, :count).by(2)
+      end
+
+      it "returns the combined processing summary" do
+        result = service.all_event
+
+        expect(result).to eq(
+          errors: 0,
+          created: 2,
+          updated: 0
+        )
+      end
+    end
+
+    context "when has_more is true but next_url is missing" do
+      before do
+        allow(client).to receive(:get).and_return(
+          {
+            "data" => [api_event],
+            "has_more" => true,
+            "next_url" => nil
+          }
+        )
+      end
+
+      it "raises an API error" do
+        expect {
+          service.all_event
+        }.to raise_error(
+          Domains::Billetto::ApiError,
+          "Billetto pagination URL is missing"
         )
       end
     end
