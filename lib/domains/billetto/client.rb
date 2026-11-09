@@ -1,7 +1,6 @@
 module Domains::Billetto
   class Client
     BASE_URL = 'https://billetto.dk/api/v3'
-    LIMIT = 25
 
     def initialize(api_keypair: ENV.fetch("BILLETTO_API_KEYPAIR", ""))
       raise Error, "Billetto API key pair is missing" if api_keypair.blank?
