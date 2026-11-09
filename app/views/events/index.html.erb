@@ -1,0 +1,63 @@
+
+<% content_for :title, "Discover Events | Billetto" %>
+
+<div class="space-y-8">
+  <div>
+    <h1 class="text-3xl font-bold tracking-tight text-gray-900">
+      Discover Events
+    </h1>
+    <p class="mt-2 text-gray-600">
+      Explore events and find something worth looking forward to.
+    </p>
+  </div>
+
+  <% if @events.any? %>
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <% @events.each do |event| %>
+        <article class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+          <% if event.image_url.present? %>
+            <%= image_tag event.image_url,
+                alt: event.title,
+                class: "h-48 w-full object-cover",
+                loading: "lazy" %>
+          <% else %>
+            <div class="flex h-48 items-center justify-center bg-gray-100 text-gray-400">
+              <span class="text-sm">No image available</span>
+            </div>
+          <% end %>
+
+          <div class="flex flex-col gap-4 p-5">
+            <div>
+              <p class="text-sm font-medium text-indigo-600">
+                <%= event.starts_at.strftime("%b %d, %Y · %I:%M %p") %>
+              </p>
+
+              <h2 class="mt-2 text-lg font-semibold text-gray-900">
+                <%= event.title %>
+              </h2>
+            </div>
+
+            <p class="text-sm leading-6 text-gray-600">
+              <%= truncate(event.description.presence || "No description available.", length: 120) %>
+            </p>
+
+            <% if event.city.present? %>
+              <p class="text-sm text-gray-500">
+                <%= event.city %><%= ", #{event.country}" if event.country.present? %>
+              </p>
+            <% end %>
+          </div>
+        </article>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="rounded-xl border border-dashed border-gray-300 bg-white px-6 py-16 text-center">
+      <h2 class="text-lg font-semibold text-gray-900">
+        No events available yet
+      </h2>
+      <p class="mt-2 text-sm text-gray-500">
+        Check back later for exciting events.
+      </p>
+    </div>
+  <% end %>
+</div>
