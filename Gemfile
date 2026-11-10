@@ -44,7 +44,7 @@ gem "image_processing", "~> 1.2"
 gem "tailwindcss-rails", "~> 4.7"
 
 # Use for user authentication
-gem 'clerk-sdk-ruby', require: "clerk"
+gem "clerk-sdk-ruby", require: "clerk"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
