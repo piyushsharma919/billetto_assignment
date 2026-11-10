@@ -1,4 +1,7 @@
 class Event < ApplicationRecord
+  has_many :votes, dependent: :destroy
+  has_one :event_vote_count, dependent: :destroy
+
   validates :source, :external_id, :title, :starts_at, presence: true
 
   validates :external_id, uniqueness: { scope: :source }

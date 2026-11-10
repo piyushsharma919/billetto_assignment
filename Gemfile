@@ -46,6 +46,9 @@ gem "tailwindcss-rails", "~> 4.7"
 # Use for user authentication
 gem "clerk-sdk-ruby", require: "clerk"
 
+# Use for event handling
+gem "rails_event_store", "~> 3.2"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
@@ -63,6 +66,7 @@ group :development, :test do
   gem "httparty"
   gem "rspec-rails"
   gem "factory_bot_rails"
+  gem "shoulda-matchers"
 end
 
 group :development do

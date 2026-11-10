@@ -1,7 +1,5 @@
 class EventsController < ApplicationController
-  before_action :authenticate_user!
-
   def index
-    @events = Event.order(starts_at: :asc)
+    @events = Event.includes(:event_vote_count).order(starts_at: :asc)
   end
 end

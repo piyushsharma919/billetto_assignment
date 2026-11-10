@@ -1,4 +1,3 @@
-<% puts ENV.fetch('CLERK_FRONTEND_API') %>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -93,6 +92,25 @@
         </div>
       </nav>
     </header>
+
+    <% if flash.any? %>
+      <div class="mx-auto w-full max-w-7xl px-6 pt-4">
+        <% flash.each do |type, message| %>
+          <% next if message.blank? %>
+
+          <% alert_classes = type.to_sym == :notice ?
+            "border-green-200 bg-green-50 text-green-800" :
+            "border-red-200 bg-red-50 text-red-800" %>
+
+          <div
+            class="rounded-lg border px-4 py-3 text-sm <%= alert_classes %>"
+            role="<%= type.to_sym == :notice ? 'status' : 'alert' %>"
+          >
+            <%= message %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
 
     <main class="flex-1 w-full max-w-7xl mx-auto px-6 py-10">
       <%= yield %>

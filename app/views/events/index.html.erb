@@ -14,7 +14,7 @@
   <% if @events.any? %>
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       <% @events.each do |event| %>
-        <article class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+        <article class="flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
           <% if event.image_url.present? %>
             <%= image_tag event.image_url,
                 alt: event.title,
@@ -26,7 +26,7 @@
             </div>
           <% end %>
 
-          <div class="flex flex-col gap-4 p-5">
+          <div class="flex flex-1 flex-col gap-4 p-5">
             <div>
               <p class="text-sm font-medium text-indigo-600">
                 <%= event.starts_at.strftime("%b %d, %Y · %I:%M %p") %>
@@ -45,6 +45,26 @@
               <p class="text-sm text-gray-500">
                 <%= event.city %><%= ", #{event.country}" if event.country.present? %>
               </p>
+            <% end %>
+          </div>
+
+          <div class="mt-auto flex items-center justify-between border-t border-gray-100 px-5 py-3">
+            <%= button_to vote_path,
+                method: :post,
+                params: { event_id: event.id, vote_type: "upvote" },
+                class: "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-green-50 hover:text-green-700" do %>
+              <%= image_tag "upvote.svg", alt: "Upvote", class: "h-5 w-5" %>
+              <span>Upvote</span>
+              <span><%= event.event_vote_count&.upvotes_count || 0 %></span>
+            <% end %>
+
+            <%= button_to vote_path,
+                method: :post,
+                params: { event_id: event.id, vote_type: "downvote" },
+                class: "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-red-50 hover:text-red-700" do %>
+              <%= image_tag "downvote.svg", alt: "Downvote", class: "h-5 w-5" %>
+              <span>Downvote</span>
+              <span><%= event.event_vote_count&.downvotes_count || 0 %></span>
             <% end %>
           </div>
         </article>
