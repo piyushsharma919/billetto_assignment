@@ -4,37 +4,28 @@ require "rails_helper"
 RSpec.describe Event do
   subject(:event) { build(:event) }
 
+  describe "associations" do
+    it { is_expected.to have_many(:votes).dependent(:destroy) }
+
+    it { is_expected.to have_one(:event_vote_count).dependent(:destroy) }
+  end
+
   describe "validations" do
-    it "is valid with valid attributes" do
-      expect(event).to be_valid
+    it { is_expected.to validate_presence_of(:source) }
+    it { is_expected.to validate_presence_of(:external_id) }
+    it { is_expected.to validate_presence_of(:title) }
+    it { is_expected.to validate_presence_of(:starts_at) }
+
+    it do
+      is_expected.to validate_uniqueness_of(:external_id)
+        .scoped_to(:source)
     end
 
-    it "requires source" do
-      event.source = nil
-
-      expect(event).not_to be_valid
-      expect(event.errors[:source]).to include("can't be blank")
-    end
-
-    it "requires external_id" do
-      event.external_id = nil
-
-      expect(event).not_to be_valid
-      expect(event.errors[:external_id]).to include("can't be blank")
-    end
-
-    it "requires title" do
-      event.title = nil
-
-      expect(event).not_to be_valid
-      expect(event.errors[:title]).to include("can't be blank")
-    end
-
-    it "requires starts_at" do
-      event.starts_at = nil
-
-      expect(event).not_to be_valid
-      expect(event.errors[:starts_at]).to include("can't be blank")
+    it do
+      is_expected.to validate_numericality_of(:minimum_price_cents)
+        .only_integer
+        .is_greater_than_or_equal_to(0)
+        .allow_nil
     end
 
     it "requires source and external_id combination to be unique" do
