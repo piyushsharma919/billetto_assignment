@@ -49,6 +49,12 @@ gem "clerk-sdk-ruby", require: "clerk"
 # Use for event handling
 gem "rails_event_store", "~> 3.2"
 
+# Use for pagination
+gem "pagy", "~> 43.0"
+
+# User for HTTP requests
+gem "httparty"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
@@ -63,7 +69,6 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 
   gem "dotenv-rails"
-  gem "httparty"
   gem "rspec-rails"
   gem "factory_bot_rails"
   gem "shoulda-matchers"

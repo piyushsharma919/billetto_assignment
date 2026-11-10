@@ -70,6 +70,20 @@
         </article>
       <% end %>
     </div>
+    <% if @pagy.pages > 1 %>
+      <nav class="flex items-center justify-center gap-2" aria-label="Pagination">
+        <% if @pagy.previous %>
+          <%= link_to "Previous",
+              url_for(page: @pagy.previous),
+              class: "rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+        <% end %>
+        <% if @pagy.next %>
+          <%= link_to "Next",
+              url_for(page: @pagy.next),
+              class: "rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+        <% end %>
+      </nav>
+    <% end %>
   <% else %>
     <div class="rounded-xl border border-dashed border-gray-300 bg-white px-6 py-16 text-center">
       <h2 class="text-lg font-semibold text-gray-900">

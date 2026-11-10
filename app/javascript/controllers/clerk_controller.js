@@ -55,7 +55,6 @@ export default class extends Controller {
     })
   }
 
-
   async signIn() {
     await this.clerk?.openSignIn()
   }
