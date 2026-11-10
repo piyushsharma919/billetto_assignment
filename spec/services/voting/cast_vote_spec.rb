@@ -179,14 +179,16 @@ RSpec.describe Voting::CastVote do
       context "when submitting the same vote again" do
         let(:vote_type) { "upvote" }
 
-        before do
+        let!(:existing_vote) do
           create(
             :vote,
             event: event,
             clerk_user_id: clerk_user_id,
             vote_type: "upvote"
           )
+        end
 
+        let!(:existing_counts) do
           create(
             :event_vote_count,
             event: event,
@@ -195,23 +197,37 @@ RSpec.describe Voting::CastVote do
           )
         end
 
-        it "does not create another vote" do
-          expect { cast_vote }.not_to change(Vote, :count)
+        let(:error_message) do
+          "You have already told us your opinion!! It's already upvoted. :D"
+        end
+
+        it "raises an ArgumentError" do
+          expect { cast_vote }
+            .to raise_error(ArgumentError, error_message)
+        end
+
+        it "does not change the existing vote" do
+          expect { cast_vote }
+            .to raise_error(ArgumentError, error_message)
+
+          expect(existing_vote.reload.vote_type).to eq("upvote")
         end
 
         it "does not publish another domain event" do
           expect { cast_vote }
-            .not_to change { event_store.read.stream(stream_name).to_a.size }
+            .to raise_error(ArgumentError, error_message)
+
+          expect(event_store.read.stream(stream_name).to_a).to be_empty
         end
 
         it "does not change the vote counts" do
           expect { cast_vote }
-            .not_to change {
-              [
-                EventVoteCount.find_by!(event: event).upvotes_count,
-                EventVoteCount.find_by!(event: event).downvotes_count
-              ]
-            }
+            .to raise_error(ArgumentError, error_message)
+
+          expect(existing_counts.reload).to have_attributes(
+            upvotes_count: 1,
+            downvotes_count: 0
+          )
         end
       end
     end
