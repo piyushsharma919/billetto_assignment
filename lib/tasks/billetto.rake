@@ -5,6 +5,8 @@ namespace :billetto do
 
     result = Domains::Billetto::PublicEvents.new.all_event
 
-    puts "Import of all Billetto event ingestion completed!"
+    puts "Import completed - created: #{result[:created]}, updated: #{result[:updated]}, errors: #{result[:errors]}"
+  rescue Domains::Billetto::Error => e
+    puts "Import failed: #{e.message}"
   end
 end

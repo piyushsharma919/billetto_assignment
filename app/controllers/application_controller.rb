@@ -22,4 +22,8 @@ class ApplicationController < ActionController::Base
 
     redirect_to sign_in_path, alert: "Please sign in to continue."
   end
+
+  def command_bus
+    Rails.configuration.command_bus
+  end
 end
