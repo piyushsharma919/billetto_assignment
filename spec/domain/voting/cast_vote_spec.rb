@@ -1,17 +1,20 @@
 require "rails_helper"
 
 RSpec.describe Voting::CastVote do
+  let(:command_bus) { Rails.configuration.command_bus }
   let(:event) { create(:event) }
   let(:clerk_user_id) { "clerk_user_123" }
   let(:event_store) { Rails.configuration.event_store }
   let(:stream_name) { "Voting$Event$#{event.id}" }
 
   subject(:cast_vote) do
-    described_class.new(
-      event: event,
-      clerk_user_id: clerk_user_id,
-      vote_type: vote_type
-    ).call
+    command_bus.call(
+      described_class.new(
+        event_id: event.id,
+        clerk_user_id: clerk_user_id,
+        vote_type: vote_type
+      )
+    )
   end
 
   describe "#call" do
@@ -237,13 +240,13 @@ RSpec.describe Voting::CastVote do
 
       it "raises an ArgumentError" do
         expect { cast_vote }
-          .to raise_error(ArgumentError, "Invalid vote type: neutral")
+          .to raise_error(ArgumentError, "Vote type is invalid: neutral")
       end
 
       it "does not create a vote" do
         expect { cast_vote }.to raise_error(
           ArgumentError,
-          "Invalid vote type: neutral"
+          "Vote type is invalid: neutral"
         )
       end
     end
@@ -254,13 +257,13 @@ RSpec.describe Voting::CastVote do
 
       it "raises an ArgumentError" do
         expect { cast_vote }
-          .to raise_error(ArgumentError, "Clerk user ID is required")
+          .to raise_error(ArgumentError, "Clerk user can't be blank")
       end
 
       it "does not create a vote" do
         expect { cast_vote }.to raise_error(
           ArgumentError,
-          "Clerk user ID is required"
+          "Clerk user can't be blank"
         )
       end
     end

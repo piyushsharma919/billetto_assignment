@@ -3,13 +3,13 @@ class VotesController < ApplicationController
   before_action :authenticate_user!
 
   def create
-    event = Event.find(params[:event_id])
-
-    Voting::CastVote.new(
-      event: event,
-      clerk_user_id: current_user[:clerk_user_id],
-      vote_type: params[:vote_type]
-    ).call
+    command_bus.call(
+      Voting::CastVote.new(
+        event_id: params[:event_id],
+        clerk_user_id: current_user[:clerk_user_id],
+        vote_type: params[:vote_type]
+      )
+    )
 
     redirect_back(
       fallback_location: root_path,
