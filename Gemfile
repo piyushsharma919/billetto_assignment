@@ -50,7 +50,7 @@ gem "clerk-sdk-ruby", require: "clerk"
 gem "rails_event_store", "~> 3.2"
 
 # Use for pagination
-gem "pagy", "~> 43.0"
+gem "pagy", "~> 43.8"
 
 # User for HTTP requests
 gem "httparty"
